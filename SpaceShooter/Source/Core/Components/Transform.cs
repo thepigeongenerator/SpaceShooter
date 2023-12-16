@@ -2,6 +2,7 @@
 
 namespace SpaceShooter.Source.Core.Components;
 internal class Transform : Component {
+    //TODO: add origin
     public Vector2 position;
     public float rotation;
     public Vector2 scale;

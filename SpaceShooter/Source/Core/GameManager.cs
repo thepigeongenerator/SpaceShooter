@@ -17,6 +17,7 @@ internal class GameManager : Game {
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private bool _initialized;
+    private bool _contentLoaded;
     private bool _loaded;
 
     #region initialization
@@ -25,7 +26,7 @@ internal class GameManager : Game {
         _gameObjects = new List<GameObject>();
         _graphics = new GraphicsDeviceManager(this);
         _initialized = false;
-        _loaded = false;
+        _contentLoaded = false;
 
         //init obj
         Content.RootDirectory = "Content";
@@ -41,6 +42,7 @@ internal class GameManager : Game {
     #endregion //initializiation
 
     public bool Initialized => _initialized;
+    public bool ContentLoaded => _contentLoaded;
     public bool Loaded => _loaded;
 
     #region game object management
@@ -97,6 +99,9 @@ internal class GameManager : Game {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         Content.Load<Texture2D>("transgender_flag");
 
+        _contentLoaded = true;
+        UpdateGameObjects(EventType.LOADCONENT);
+
         _loaded = true;
         UpdateGameObjects(EventType.LOAD);
     }
@@ -129,6 +134,7 @@ internal class GameManager : Game {
         //get the type which will be used to check which event will be implemented
         Type checkType = eventType switch {
             EventType.INITIALIZE => typeof(IInitialize),
+            EventType.LOADCONENT => typeof(ILoadContent),
             EventType.LOAD => typeof(ILoad),
             EventType.UPDATE => typeof(IUpdate),
             EventType.DRAW => typeof(IDraw),
@@ -150,8 +156,10 @@ internal class GameManager : Game {
                 Task task = eventType switch {
                     EventType.INITIALIZE //call the initialize method
                         => Task.Run(() => ((IInitialize)component).Initialize()), //calling Initialize()
+                    EventType.LOADCONENT //call the load content method
+                        => Task.Run(() => ((ILoadContent)component).LoadContent()), //calling LoadContent()
                     EventType.LOAD //call the load content method
-                        => Task.Run(() => ((ILoad)component).Load()), //calling LoadContent()
+                        => Task.Run(() => ((ILoad)component).Load()), //calling Load()
                     EventType.UPDATE //call the update method with the correct arguments
                         => Task.Run(() => ((IUpdate)component).Update((GameTime)args[0])), //calling Update()
                     EventType.DRAW //call the drawing method with the correct arguments

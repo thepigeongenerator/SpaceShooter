@@ -5,7 +5,8 @@ using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.ScriptComponent;
 
 namespace Source.Core.Components;
-internal class SpriteRenderer : Component, IDraw, ILoad {
+internal class SpriteRenderer : Component, IDraw, ILoadContent {
+    //TODO: add easy texture sizing which includes scaling
     public SpriteData spriteData = new() {
         textureData = new(),
         tint = Color.White,
@@ -14,7 +15,7 @@ internal class SpriteRenderer : Component, IDraw, ILoad {
         layerDepth = 0,
     };
 
-    public void Load() {
+    public void LoadContent() {
         //load the texture
         spriteData.textureData.texture2D = GameManager.Instance.Content.Load<Texture2D>(spriteData.textureData.name);
     }

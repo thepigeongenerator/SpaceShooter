@@ -35,8 +35,12 @@ internal class GameObject : IDisposable {
             initialize.Initialize();
         }
 
-        if (game.Loaded && component is ILoad loadContent) {
-            loadContent.Load();
+        if (game.ContentLoaded && component is ILoadContent loadContent) {
+            loadContent.LoadContent();
+        }
+
+        if (game.ContentLoaded && component is ILoad load) {
+            load.Load();
         }
 
         _components.Add(component);
