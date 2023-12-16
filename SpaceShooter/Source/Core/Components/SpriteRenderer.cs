@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Source.Core.Data;
+using SpaceShooter.Source.Core;
+using SpaceShooter.Source.Core.ScriptComponent;
 using System;
-using System.Threading.Tasks;
 
 namespace Source.Core.Components;
-internal class SpriteRenderer : ScriptComponent {
+internal class SpriteRenderer : Component, IDraw, ILoad {
     public SpriteData spriteData = new() {
         textureData = new(),
         tint = Color.White,
@@ -15,21 +15,27 @@ internal class SpriteRenderer : ScriptComponent {
         layerDepth = 0,
     };
 
-    protected override void Load(ContentManager content) {
-        //load the texture
-        //spriteData.textureData.texture2D = content.Load<Texture2D>(spriteData.textureData.name);
+    public SpriteRenderer() {
+        Console.WriteLine("constructin'");
     }
 
-    protected override void Draw(SpriteBatch spriteBatch) {
+    public void Load() {
+        //load the texture
+        Console.WriteLine("loadin'");
+        spriteData.textureData.texture2D = GameManager.Instance.Content.Load<Texture2D>(spriteData.textureData.name);
+        Console.WriteLine("stopped loadin'");
+    }
+
+    public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
         //draw the sprite using _spriteData to the screen
         spriteBatch.Draw(
             spriteData.textureData.texture2D,
-            gameObject.transform.position,
+            Transform.position,
             null,
             spriteData.tint,
-            gameObject.transform.rotation,
+            Transform.rotation,
             spriteData.origin,
-            gameObject.transform.scale,
+            Transform.scale,
             spriteData.effects,
             spriteData.layerDepth
             );

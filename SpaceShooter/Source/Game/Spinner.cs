@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using Source.Core.Components;
+using SpaceShooter.Source.Core;
+using SpaceShooter.Source.Core.ScriptComponent;
+using SpaceShooter.Source.Core.Utils;
 using System;
 
 namespace SpaceShooter.Source.Game;
-internal class Spinner : ScriptComponent {
-    protected override void Update(GameTime gameTime) {
-        float deltaTime = gameTime.ElapsedGameTime.Seconds;
-        Transform.rotation += MathF.PI / 180 * deltaTime;
+internal class Spinner : Component, IUpdate {
+
+    public void Update(GameTime gameTime) {
+        Transform.rotation += MathF.PI / 180 * 0.1f * gameTime.GetDeltaTime();
     }
 }

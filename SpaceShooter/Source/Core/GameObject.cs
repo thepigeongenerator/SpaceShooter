@@ -1,33 +1,49 @@
-﻿using Microsoft.Xna.Framework;
-using Source.Core.Components;
+﻿#nullable enable
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using SpaceShooter.Source.Core.ScriptComponent;
+using SpaceShooter.Source.Core.Components;
+using Source.Core;
 
-namespace Source.Core;
-internal sealed class GameObject {
-    public readonly Transform transform;
-    private readonly List<Component> _components = new();
+namespace SpaceShooter.Source.Core;
+internal class GameObject {
+    private List<Component> _components;
+    private Transform _transform;
 
     public GameObject() {
-        transform = new Transform();
-        transform.position = Vector2.Zero;
-        transform.rotation = 0f;
-        transform.scale = Vector2.One;
+        _components = new List<Component>();
+        _transform = AddComponent<Transform>();
+        GameManager.Instance.AddGameObject(this);
+    }
+
+    public Transform Transform {
+        get => _transform;
     }
 
     public T AddComponent<T>() where T : Component {
+        GameManager game = GameManager.Instance;
         T component = Activator.CreateInstance<T>();
-        component.gameObject = this; //set the gameObject to this
-        _components.Add(component); //add the component to the component list
+        component.GameObject = this;
+
+        if (game.Initialized && component is IInitialize initialize) {
+            initialize.Initialize();
+        }
+
+        if (game.Loaded && component is ILoad loadContent) {
+            loadContent.Load();
+        }
+
+        _components.Add(component);
         return component;
     }
 
-    public T GetComponent<T>() where T : Component {
+    public T? GetComponent<T>() where T : Component {
         return (
-            from component in _components
-            where component is T
-            select component as T).FirstOrDefault();
+            from comp in _components
+            where comp is T
+            select comp as T
+            ).FirstOrDefault();
     }
 
     public IReadOnlyCollection<Component> GetComponents() {
