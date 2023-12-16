@@ -81,7 +81,7 @@ internal class GameManager : Game {
 
         //add a gameObject
         GameObject gameObject = new();
-        gameObject.AddComponent<Spinner>();
+        gameObject.AddComponent<PlayerInput>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         spriteRenderer.spriteData.textureData.name = "transgender_flag";
 
