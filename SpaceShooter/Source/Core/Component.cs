@@ -4,7 +4,7 @@ using SpaceShooter.Source.Core.Components;
 using System;
 
 namespace SpaceShooter.Source.Core;
-internal abstract class Component: IDisposable {
+internal abstract class Component : IDisposable {
     private bool _disposed = false;
     private GameObject? _gameObject;
 

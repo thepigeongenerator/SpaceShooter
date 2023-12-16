@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Source.Core.Data;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.ScriptComponent;
-using System;
 
 namespace Source.Core.Components;
 internal class SpriteRenderer : Component, IDraw, ILoad {

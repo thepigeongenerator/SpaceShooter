@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Source.Core.Components;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.ScriptComponent;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using Source.Core.Components;
 using SpaceShooter.Source.Game;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Source.Core;
 internal class GameManager : Game {

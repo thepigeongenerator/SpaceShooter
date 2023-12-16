@@ -1,10 +1,10 @@
 ﻿#nullable enable
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using SpaceShooter.Source.Core.ScriptComponent;
-using SpaceShooter.Source.Core.Components;
 using Source.Core;
+using SpaceShooter.Source.Core.Components;
+using SpaceShooter.Source.Core.ScriptComponent;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SpaceShooter.Source.Core;
 internal class GameObject : IDisposable {
