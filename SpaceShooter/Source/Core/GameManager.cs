@@ -8,16 +8,18 @@ using System.Threading.Tasks;
 using System;
 using Source.Core.Components;
 using SpaceShooter.Source.Game;
+using System.Linq;
 
 namespace Source.Core;
 internal class GameManager : Game {
-    private static GameManager _instance;
+    private static GameManager _instance = null;
     private readonly List<GameObject> _gameObjects;
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private bool _initialized;
     private bool _loaded;
 
+    #region initialization
     private GameManager() {
         //init fields
         _gameObjects = new List<GameObject>();
@@ -36,30 +38,56 @@ internal class GameManager : Game {
             return _instance;
         }
     }
+    #endregion //initializiation
 
     public bool Initialized => _initialized;
     public bool Loaded => _loaded;
 
+    #region game object management
     public void AddGameObject(GameObject gameObject) {
         _gameObjects.Add(gameObject);
     }
 
+    public void DisposeGameObject(GameObject gameObject) {
+        //if the gameObject isn't disposed
+        if (gameObject.Disposed == false) {
+            //dispose the gameObject and exit, since the gameObject calls this itself
+            gameObject.Dispose();
+            return;
+        }
+
+        _gameObjects.Remove(gameObject);
+    }
+    #endregion //object management
+
+    #region object finding
+    public T FindObjectOfType<T>() where T : Component {
+        return FindObjectsOfType<T>()?.FirstOrDefault();
+    }
+
+    public IEnumerable<T>? FindObjectsOfType<T>() where T : Component {
+        return
+            from gameObject in _gameObjects
+            let components = gameObject.GetComponents<T>()
+            where components != null
+            from component in components
+            select component;
+    }
+    #endregion //object finding
+
+    #region monogame events
     //called after the constructor
     protected override void Initialize() {
-        Console.WriteLine("Making a GameObject");
 
         //add a gameObject
         GameObject gameObject = new();
         gameObject.AddComponent<Spinner>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.spriteData.textureData.name = "HighPigeon";
+        spriteRenderer.spriteData.textureData.name = "transgender_flag";
 
-        Console.WriteLine("finished GameObject!");
 
-        Console.WriteLine("started calling initialize...");
-        UpdateGameObjects(EventType.INITIALIZE);
         _initialized = true;
-        Console.WriteLine("finished initialize!");
+        UpdateGameObjects(EventType.INITIALIZE);
 
         base.Initialize();
     }
@@ -67,12 +95,10 @@ internal class GameManager : Game {
     //called after initialize; loads the content
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        Content.Load<Texture2D>("HighPigeon");
+        Content.Load<Texture2D>("transgender_flag");
 
-        Console.WriteLine("started calling load...");
-        UpdateGameObjects(EventType.LOAD);
         _loaded = true;
-        Console.WriteLine("finished load!");
+        UpdateGameObjects(EventType.LOAD);
     }
 
     //called on every game update
@@ -97,6 +123,7 @@ internal class GameManager : Game {
 
         base.Draw(gameTime);
     }
+    #endregion //monogame events
 
     private void UpdateGameObjects(EventType eventType, params object[] args) {
         //get the type which will be used to check which event will be implemented

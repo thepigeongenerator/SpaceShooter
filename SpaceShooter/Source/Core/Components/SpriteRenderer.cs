@@ -15,15 +15,9 @@ internal class SpriteRenderer : Component, IDraw, ILoad {
         layerDepth = 0,
     };
 
-    public SpriteRenderer() {
-        Console.WriteLine("constructin'");
-    }
-
     public void Load() {
         //load the texture
-        Console.WriteLine("loadin'");
         spriteData.textureData.texture2D = GameManager.Instance.Content.Load<Texture2D>(spriteData.textureData.name);
-        Console.WriteLine("stopped loadin'");
     }
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {

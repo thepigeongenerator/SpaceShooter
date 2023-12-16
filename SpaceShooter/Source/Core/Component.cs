@@ -4,8 +4,13 @@ using SpaceShooter.Source.Core.Components;
 using System;
 
 namespace SpaceShooter.Source.Core;
-internal abstract class Component {
+internal abstract class Component: IDisposable {
+    private bool _disposed = false;
     private GameObject? _gameObject;
+
+    public bool Disposed {
+        get => _disposed;
+    }
 
     public GameObject GameObject {
         get {
@@ -34,5 +39,10 @@ internal abstract class Component {
 
     public T? GetComponent<T>() where T : Component {
         return GameObject.GetComponent<T>();
+    }
+
+    public void Dispose() {
+        _disposed = false;
+        GameObject.RemoveComponent(this);
     }
 }

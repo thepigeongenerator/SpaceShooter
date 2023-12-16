@@ -7,14 +7,19 @@ using SpaceShooter.Source.Core.Components;
 using Source.Core;
 
 namespace SpaceShooter.Source.Core;
-internal class GameObject {
-    private List<Component> _components;
-    private Transform _transform;
+internal class GameObject : IDisposable {
+    private readonly List<Component> _components;
+    private readonly Transform _transform;
+    private bool _disposed = false;
 
     public GameObject() {
         _components = new List<Component>();
         _transform = AddComponent<Transform>();
         GameManager.Instance.AddGameObject(this);
+    }
+
+    public bool Disposed {
+        get => _disposed;
     }
 
     public Transform Transform {
@@ -38,15 +43,40 @@ internal class GameObject {
         return component;
     }
 
+    public void RemoveComponent(Component component) {
+        //if the component isn't disposed
+        if (component.Disposed == false) {
+            //dispose the component and exit, since the component calls this itself
+            component.Dispose();
+            return;
+        }
+
+        _components.Remove(component);
+    }
+
     public T? GetComponent<T>() where T : Component {
-        return (
-            from comp in _components
-            where comp is T
-            select comp as T
-            ).FirstOrDefault();
+        return GetComponents<T>()?.FirstOrDefault();
+    }
+
+    #region component finding
+    public IEnumerable<T>? GetComponents<T>() where T : Component {
+        return
+            from component in _components
+            where component is T
+            select component as T;
     }
 
     public IReadOnlyCollection<Component> GetComponents() {
         return _components;
+    }
+    #endregion //component finding
+
+    public void Dispose() {
+        _disposed = true;
+        foreach (Component component in _components) {
+            component.Dispose();
+        }
+
+        GameManager.Instance.DisposeGameObject(this);
     }
 }
