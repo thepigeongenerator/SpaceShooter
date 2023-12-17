@@ -13,6 +13,23 @@ internal class SpriteRenderer : Component, IDraw, ILoadContent {
         layerDepth = 0,
     };
 
+    /// <summary>
+    /// gets the texture size <see cref="Transform.scale"/>, use <see cref="TextureSize"/> for scaled texture sizes
+    /// </summary>
+    public Vector2 UnscaledTextureSize {
+        get => new(
+                spriteData.textureData.texture2D.Width,
+                spriteData.textureData.texture2D.Height
+            );
+    }
+
+    /// <summary>
+    /// gets the texture size which is scaled with <see cref="Transform.scale"/>, use <see cref="UnscaledTextureSize"/> for unscaled
+    /// </summary>
+    public Vector2 TextureSize {
+        get => Transform.scale * UnscaledTextureSize;
+    }
+
     public void LoadContent() {
         //load the texture
         spriteData.textureData.texture2D = GameManager.Instance.Content.Load<Texture2D>(spriteData.textureData.name);
@@ -26,9 +43,7 @@ internal class SpriteRenderer : Component, IDraw, ILoadContent {
             null,
             spriteData.tint,
             Transform.rotation,
-            Transform.origin * new Vector2(
-                spriteData.textureData.texture2D.Width,
-                spriteData.textureData.texture2D.Height),
+            Transform.origin * UnscaledTextureSize,
             Transform.scale,
             spriteData.effects,
             spriteData.layerDepth
