@@ -142,7 +142,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
 
     //draws every frame
     protected override void Draw(GameTime gameTime) {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(new Color(0.16f, 0.150f, 0.165f));
 
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
