@@ -233,7 +233,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
             //loop through the components in the gameObject
             for (int j = 0; j < components.Count; j++) {
 
-                Component component = components.ElementAt(j); //get the element at j and store it's referencedddd
+                Component component = components.ElementAt(j); //get the element at j and store it's referenced
                 if (component == null) {
                     continue;
                 }

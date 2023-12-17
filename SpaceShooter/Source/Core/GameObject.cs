@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using SpaceShooter.Source.Core.Components;
-using SpaceShooter.Source.Core.ScriptComponent;
 using System;
 using System.Collections.Generic;
 using System.Linq;

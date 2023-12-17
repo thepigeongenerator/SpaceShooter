@@ -38,7 +38,7 @@ internal class Animator : Component, IUpdate, ILoadContent {
         if (enabled && condition.Invoke() && gameTime.TotalGameTime < _timedOutTill) {
             return;
         }
-        
+
         //timeout over
         _spriteRenderer.spriteData.textureData = frames[_frameIndex]; //swap out the current texture with the texture in the animator
 
