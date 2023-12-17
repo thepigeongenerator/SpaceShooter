@@ -85,9 +85,20 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         GameObject gameObject = new();
         gameObject.AddComponent<PlayerInput>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.spriteData.textureData.name = "HighPigeon";
+        spriteRenderer.spriteData.textureData.name = "spaceship/spaceship_0";
+        Animator animator = gameObject.AddComponent<Animator>();
+        animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_0" });
+        animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_1" });
+        animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_2" });
+        gameObject.Transform.scale = Vector2.One * 5;
 
+        //set graphics settings
+        _graphics.IsFullScreen = false;
+        _graphics.PreferredBackBufferWidth = 960;
+        _graphics.PreferredBackBufferHeight = 720;
+        _graphics.ApplyChanges();
 
+        //call events
         _initialized = true;
         UpdateGameObjects(EventType.INITIALIZE);
 
@@ -128,7 +139,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     protected override void Draw(GameTime gameTime) {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
         UpdateGameObjects(EventType.DRAW, gameTime, _spriteBatch);
 
