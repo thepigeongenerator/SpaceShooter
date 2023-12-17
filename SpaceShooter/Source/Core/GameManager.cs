@@ -7,7 +7,6 @@ using SpaceShooter.Source.Core.Utils;
 using SpaceShooter.Source.Game;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -224,7 +223,13 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         List<Task> callEvents = new(); //list of the tasks which is calling the methods within the gameObjects
         //loop through the gameObjects within the game
         for (int i = 0; i < gameObjects.Count; i++) {
-            IReadOnlyCollection<Component> components = gameObjects.ElementAt(i).GetComponents(); //get the components from the gameObject
+            GameObject gameObject = gameObjects.ElementAt(i);
+
+            if (gameObject == null) {
+                continue; //BUG: idk why this check is even nessecary, but at some point a gameObject == null
+            }
+
+            IReadOnlyCollection<Component> components = gameObject.GetComponents(); //get the components from the gameObject
             //loop through the components in the gameObject
             for (int j = 0; j < components.Count; j++) {
 

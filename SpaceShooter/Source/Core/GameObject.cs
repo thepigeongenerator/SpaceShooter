@@ -67,9 +67,7 @@ internal class GameObject : IDisposable {
     public void Dispose() {
         _disposed = true;
 
-        //using for loop using indexing at 0 because we are modifying the List
-        int count = _components.Count;
-        for (int i = 0; i < count; i++) {
+        while (_components.Count > 0) {
             _components[0].Dispose();
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
@@ -6,9 +7,21 @@ using SpaceShooter.Source.Core.Utils;
 using System;
 
 namespace SpaceShooter.Source.Game;
-internal class Shooting : Component, IUpdate {
-    private const int DELAY_MILISECONDS = 1000;
+internal class Shooting : Component, ILoad, ILoadContent, IUpdate {
+    private const int DELAY_MILISECONDS = 200;
     private TimeSpan _timedOutTill = TimeSpan.Zero;
+    private Vector2 _bulletPos = Vector2.Zero;
+    private Texture2D _bulletTexture;
+
+    public void LoadContent() {
+        GameManager game = GameManager.Instance;
+        _bulletTexture = game.Content.Load<Texture2D>("bullet");
+    }
+
+    public void Load() {
+        SpriteRenderer spriteRender = GetComponent<SpriteRenderer>();
+        _bulletPos.Y = -spriteRender.TextureSize.Y;
+    }
 
     public void Update(GameTime gameTime) {
         if (gameTime.TotalGameTime < _timedOutTill) {
@@ -17,9 +30,10 @@ internal class Shooting : Component, IUpdate {
 
         {
             GameObject bullet = new();
-            bullet.Transform.position = Transform.position;
+            bullet.Transform.position = Transform.position + _bulletPos;
+            bullet.Transform.scale = Vector2.One * 4;
             SpriteRenderer spriteRenderer = bullet.AddComponent<SpriteRenderer>();
-            spriteRenderer.spriteData.textureData.name = "spaceship/spaceship_0";
+            spriteRenderer.spriteData.textureData.texture2D = _bulletTexture;
             bullet.AddComponent<Bullet>();
         }
 

@@ -32,7 +32,7 @@ internal class SpriteRenderer : Component, IDraw, ILoadContent {
 
     public void LoadContent() {
         //load the texture
-        spriteData.textureData.texture2D = GameManager.Instance.Content.Load<Texture2D>(spriteData.textureData.name);
+        spriteData.textureData.texture2D ??= GameManager.Instance.Content.Load<Texture2D>(spriteData.textureData.name);
     }
 
     public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
