@@ -25,18 +25,6 @@
 /processorParam:TextureFormat=Color
 /build:HighPigeon.png
 
-#begin trangender.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:trangender.png;transgender.png
-
 #begin transgender_flag.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -48,4 +36,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:transgender_flag.png
+
+#begin transgender.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:transgender.png
 
