@@ -22,6 +22,7 @@ internal class Animator : Component, IUpdate, ILoadContent {
     public void LoadContent() {
         _spriteRenderer = GetComponent<SpriteRenderer>();
 
+        //load the textures
         GameManager game = GameManager.Instance;
         for (int i = 0; i < frames.Count; i++) {
             TextureData frame = frames[i];

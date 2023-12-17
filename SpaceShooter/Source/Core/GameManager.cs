@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace SpaceShooter.Source.Core;
 internal class GameManager : Microsoft.Xna.Framework.Game {
-    private static GameManager _instance = null;
-    private readonly List<GameObject> _gameObjects;
-    private readonly GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-    private bool _initialized;
-    private bool _contentLoaded;
-    private bool _loaded;
+    private static GameManager _instance = null;        //holds this instance of the GameManager
+    private readonly List<GameObject> _gameObjects;     //the GameObjects active in the game
+    private readonly GraphicsDeviceManager _graphics;   //graphics device
+    private SpriteBatch _spriteBatch;                   //used for drawing sprites to the screen
+    private bool _initialized;      //true when the initialize function has been called
+    private bool _contentLoaded;    //true when the loadcontent function was called
+    private bool _loaded;           //true when the load event was called
 
     #region initialization
     private GameManager() {
@@ -81,7 +81,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     //called after the constructor
     protected override void Initialize() {
 
-        //add a gameObject
+        //TEMPORARY: add a gameObject
         GameObject gameObject = new();
         gameObject.AddComponent<PlayerInput>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
@@ -98,7 +98,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         _graphics.PreferredBackBufferHeight = 720;
         _graphics.ApplyChanges();
 
-        //call events
+        //call Initialize() on the GameObjects
         _initialized = true;
         UpdateGameObjects(EventType.INITIALIZE);
 
@@ -117,19 +117,22 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
             }
         }
 
-        //call events
+        //call the GameObjects to run LoadContent()
         _contentLoaded = true;
         UpdateGameObjects(EventType.LOADCONENT);
 
+        //call the GameObjects to run Load()
         _loaded = true;
         UpdateGameObjects(EventType.LOAD);
     }
 
     //called on every game update
     protected override void Update(GameTime gameTime) {
+        //exit if the escape key was pressed
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
+        //call Update() on all GameObjects
         UpdateGameObjects(EventType.UPDATE, gameTime);
 
         base.Update(gameTime);
@@ -141,6 +144,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
 
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
+        //call the Draw() functions of the gameObjects
         UpdateGameObjects(EventType.DRAW, gameTime, _spriteBatch);
 
         _spriteBatch.End();
@@ -183,7 +187,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
                         => Task.Run(() => ((IUpdate)component).Update((GameTime)args[0])), //calling Update()
                     EventType.DRAW //call the drawing method with the correct arguments
                         => Task.Run(() => ((IDraw)component).Draw((GameTime)args[0], (SpriteBatch)args[1])), //calling Draw()
-                    _ => throw new NotImplementedException(),
+                    _ => throw new NotImplementedException($"{eventType} was not implemented"),
                 };
 
                 //store the task in the list

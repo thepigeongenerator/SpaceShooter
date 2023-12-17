@@ -6,7 +6,6 @@ using SpaceShooter.Source.Core.ScriptComponent;
 namespace SpaceShooter.Source.Core.Components;
 internal class SpriteRenderer : Component, IDraw, ILoadContent {
     //TODO: add easy texture sizing which includes scaling
-    private Vector2 _origin;
     public SpriteData spriteData = new() {
         textureData = new(),
         tint = Color.White,

@@ -15,7 +15,7 @@ internal abstract class Component : IDisposable {
     public GameObject GameObject {
         get {
             if (_gameObject == null) {
-                throw new NullReferenceException($"'{nameof(_gameObject)}' has yet to be assigned a value, try getting this value later.");
+                throw new NullReferenceException($"'{nameof(_gameObject)}' has yet to be assigned a value, try getting this value in Initialize().");
             }
 
             return _gameObject;

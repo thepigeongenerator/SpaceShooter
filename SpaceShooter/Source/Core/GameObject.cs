@@ -7,13 +7,13 @@ using System.Linq;
 
 namespace SpaceShooter.Source.Core;
 internal class GameObject : IDisposable {
-    private readonly List<Component> _components;
-    private readonly Transform _transform;
-    private bool _disposed = false;
+    private readonly List<Component> _components;   //holds components of the GameObject
+    private readonly Transform _transform;          //holds the GameObject's position
+    private bool _disposed = false;                 //whether the GameObject has been disposed
 
     public GameObject() {
         _components = new List<Component>();
-        _transform = AddComponent<Transform>();
+        _transform = AddComponent<Transform>(); //add the transform component in
         GameManager.Instance.AddGameObject(this);
     }
 
@@ -25,11 +25,13 @@ internal class GameObject : IDisposable {
         get => _transform;
     }
 
+    //adds a component to the GameObject
     public T AddComponent<T>() where T : Component {
         GameManager game = GameManager.Instance;
         T component = Activator.CreateInstance<T>();
         component.GameObject = this;
 
+        //initialization
         if (game.Initialized && component is IInitialize initialize) {
             initialize.Initialize();
         }
@@ -42,10 +44,12 @@ internal class GameObject : IDisposable {
             load.Load();
         }
 
+        //add the components to the GameObject
         _components.Add(component);
         return component;
     }
 
+    //remove the component from the GameObject
     public void RemoveComponent(Component component) {
         //if the component isn't disposed
         if (component.Disposed == false) {
