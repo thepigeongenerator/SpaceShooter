@@ -44,13 +44,10 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     public void AddGameObject(GameObject gameObject) {
         if (_initialized == false) {
             _loadedGameObjects.Add(gameObject);
-            Debug.WriteLine($"added a GameObject to the game: (New Load Count: {_loadedGameObjects.Count})");
         }
         else {
             _loadGameObjectQue.Add(gameObject);
-            Debug.WriteLine($"added a GameObject to load que: (New Que Count: {_loadGameObjectQue.Count})");
         }
-
     }
 
     public void DisposeGameObject(GameObject gameObject) {
@@ -62,7 +59,6 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         }
 
         _loadedGameObjects.Remove(gameObject);
-        Debug.WriteLine($"disposed a GameObject: (New Loaded Count: {_loadedGameObjects.Count})");
     }
     #endregion //object management
 
@@ -184,7 +180,6 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         UpdateGameObjects(EventType.LOAD, _loadGameObjectQue);
         _loadGameObjectQue.ForEach((obj) => _loadedGameObjects.Add(obj)); //add the gameObjects to the loaded list
         _loadGameObjectQue.Clear(); //clear the que list
-        Debug.WriteLine($"loaded gameObjects qued for adding: (New Loaded Count: {_loadedGameObjects.Count})");
     }
 
     /// <summary>
