@@ -13,15 +13,18 @@ using System.Threading.Tasks;
 
 namespace SpaceShooter.Source.Core;
 internal class GameManager : Microsoft.Xna.Framework.Game {
-    private static GameManager _instance = null;        //holds this instance of the GameManager
-    private readonly List<GameObject> _gameObjects;     //the GameObjects active in the game
-    private readonly GraphicsDeviceManager _graphics;   //graphics device
-    private SpriteBatch _spriteBatch;                   //used for drawing sprites to the screen
+    private static GameManager _instance = null;            //holds this instance of the GameManager
+    private readonly List<GameObject> _loadedGameObjects;   //the GameObjects active in the game
+    private readonly List<GameObject> _loadGameObjectQue;   //the GameObjects that still need to be loaded
+    private readonly GraphicsDeviceManager _graphics;       //graphics device
+    private SpriteBatch _spriteBatch;                       //used for drawing sprites to the screen
+    private bool _initialized = false;
 
     #region initialization
     private GameManager() {
         //init fields
-        _gameObjects = new List<GameObject>();
+        _loadedGameObjects = new List<GameObject>();
+        _loadGameObjectQue = new List<GameObject>();
         _graphics = new GraphicsDeviceManager(this);
 
         //init obj
@@ -39,8 +42,15 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
 
     #region game object management
     public void AddGameObject(GameObject gameObject) {
-        _gameObjects.Add(gameObject);
-        Debug.WriteLine($"added a GameObject: (Count: {_gameObjects.Count})");
+        if (_initialized == false) {
+            _loadedGameObjects.Add(gameObject);
+            Debug.WriteLine($"added a GameObject to the game: (New Load Count: {_loadedGameObjects.Count})");
+        }
+        else {
+            _loadGameObjectQue.Add(gameObject);
+            Debug.WriteLine($"added a GameObject to load que: (New Que Count: {_loadGameObjectQue.Count})");
+        }
+
     }
 
     public void DisposeGameObject(GameObject gameObject) {
@@ -51,8 +61,8 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
             return;
         }
 
-        _gameObjects.Remove(gameObject);
-        Debug.WriteLine($"disposed a GameObject: (Count: {_gameObjects.Count})");
+        _loadedGameObjects.Remove(gameObject);
+        Debug.WriteLine($"disposed a GameObject: (New Loaded Count: {_loadedGameObjects.Count})");
     }
     #endregion //object management
 
@@ -63,7 +73,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
 
     public IEnumerable<T> FindObjectsOfType<T>() where T : Component {
         return
-            from gameObject in _gameObjects
+            from gameObject in _loadedGameObjects
             let components = gameObject.GetComponents<T>()
             where components != null
             from component in components
@@ -95,7 +105,8 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         _graphics.ApplyChanges();
 
         //call Initialize() on the GameObjects
-        UpdateGameObjects(EventType.INITIALIZE);
+        _initialized = true;
+        UpdateGameObjects(EventType.INITIALIZE, _loadedGameObjects);
 
         base.Initialize();
     }
@@ -113,10 +124,10 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         }
 
         //call the GameObjects to run LoadContent()
-        UpdateGameObjects(EventType.LOADCONENT);
+        UpdateGameObjects(EventType.LOADCONENT, _loadedGameObjects);
 
         //call the GameObjects to run Load()
-        UpdateGameObjects(EventType.LOAD);
+        UpdateGameObjects(EventType.LOAD, _loadedGameObjects);
     }
 
     //called on every game update
@@ -129,13 +140,11 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         gameTime.ElapsedGameTime *= Time.timeScale; //calculate the elapsed time using the timescale
         Time.deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds; //calculate the deltaTime
 
-        //initialize components that may have been added between updates
-        UpdateGameObjects(EventType.INITIALIZE);
-        UpdateGameObjects(EventType.LOADCONENT);
-        UpdateGameObjects(EventType.LOAD);
+        //load the qued gameObjects
+        LoadQue();
 
         //call Update() on all GameObjects
-        UpdateGameObjects(EventType.UPDATE, gameTime);
+        UpdateGameObjects(EventType.UPDATE, _loadedGameObjects, gameTime);
 
         base.Update(gameTime);
     }
@@ -146,10 +155,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         gameTime.ElapsedGameTime *= Time.timeScale; //calculate the elapsed time using the timescale
         Time.deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds; //calculate the deltaTime
 
-        //initialize components that may have been added between updates
-        UpdateGameObjects(EventType.INITIALIZE);
-        UpdateGameObjects(EventType.LOADCONENT);
-        UpdateGameObjects(EventType.LOAD);
+        LoadQue();
 
         //clear the screen
         GraphicsDevice.Clear(new Color(0.16f, 0.150f, 0.165f));
@@ -157,7 +163,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
         //call the Draw() functions of the gameObjects
-        UpdateGameObjects(EventType.DRAW, gameTime, _spriteBatch);
+        UpdateGameObjects(EventType.DRAW, _loadedGameObjects, gameTime, _spriteBatch);
 
         _spriteBatch.End();
 
@@ -165,55 +171,65 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     }
     #endregion //monogame events
 
-    private void UpdateGameObjects(EventType eventType, params object[] args) {
-        #region event handling
-        void TryRun(Action action) {
-            try {
-                action.Invoke();
-            }
-            catch {
-                throw;
-            }
+    //loads the gameObjects which have been qued up
+    private void LoadQue() {
+        //don't bother if there is nothing in the que
+        if (_loadGameObjectQue.Count == 0) {
+            return;
         }
 
+        //initialize components that may have been added between updates
+        UpdateGameObjects(EventType.INITIALIZE, _loadGameObjectQue);
+        UpdateGameObjects(EventType.LOADCONENT, _loadGameObjectQue);
+        UpdateGameObjects(EventType.LOAD, _loadGameObjectQue);
+        _loadGameObjectQue.ForEach((obj) => _loadedGameObjects.Add(obj)); //add the gameObjects to the loaded list
+        _loadGameObjectQue.Clear(); //clear the que list
+        Debug.WriteLine($"loaded gameObjects qued for adding: (New Loaded Count: {_loadedGameObjects.Count})");
+    }
+
+    /// <summary>
+    /// calls the <paramref name="eventType"/> on each component in <paramref name="gameObjects"/> asynchronously. Blocks thread until all Components have been Updated.
+    /// </summary>
+    private static void UpdateGameObjects(EventType eventType, IReadOnlyCollection<GameObject> gameObjects, params object[] args) {
+        #region event handling
         void InitializeComponent(Component comp) {
             if (comp.initialized == false && comp is IInitialize obj) {
-                TryRun(() => obj.Initialize());
+                obj.Initialize();
                 comp.initialized = true;
             }
         }
 
         void LoadContentComponent(Component comp) {
             if (comp.contentLoaded == false && comp is ILoadContent obj) {
-                TryRun(() => obj.LoadContent());
+                obj.LoadContent();
                 comp.contentLoaded = true;
             }
         }
 
         void LoadComponent(Component comp) {
             if (comp.loaded == false && comp is ILoad obj) {
-                TryRun(() => obj.Load());
+                obj.Load();
                 comp.loaded = true;
             }
         }
 
         void UpdateComponent(Component comp, GameTime gameTime) {
             if (comp is IUpdate obj) {
-                TryRun(() => obj.Update(gameTime));
+                obj.Update(gameTime);
             }
         }
 
         void DrawComponent(Component comp, GameTime gameTime, SpriteBatch spriteBatch) {
             if (comp is IDraw obj) {
-                TryRun(() => obj.Draw(gameTime, spriteBatch));
+                obj.Draw(gameTime, spriteBatch);
             }
         }
         #endregion //event handling
 
         List<Task> callEvents = new(); //list of the tasks which is calling the methods within the gameObjects
         //loop through the gameObjects within the game
-        for (int i = 0; i < _gameObjects.Count; i++) {
-            IReadOnlyCollection<Component> components = _gameObjects[i].GetComponents(); //get the components from the gameObject
+        for (int i = 0; i < gameObjects.Count; i++) {
+            IReadOnlyCollection<Component> components = gameObjects.ElementAt(i).GetComponents(); //get the components from the gameObject
             //loop through the components in the gameObject
             for (int j = 0; j < components.Count; j++) {
 
