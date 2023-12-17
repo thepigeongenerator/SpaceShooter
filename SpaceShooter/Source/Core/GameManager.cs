@@ -85,7 +85,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         GameObject gameObject = new();
         gameObject.AddComponent<PlayerInput>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.spriteData.textureData.name = "transgender";
+        spriteRenderer.spriteData.textureData.name = "HighPigeon";
 
 
         _initialized = true;
