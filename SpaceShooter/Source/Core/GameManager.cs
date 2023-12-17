@@ -40,6 +40,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     #region game object management
     public void AddGameObject(GameObject gameObject) {
         _gameObjects.Add(gameObject);
+        Debug.WriteLine($"added a GameObject: (Count: {_gameObjects.Count})");
     }
 
     public void DisposeGameObject(GameObject gameObject) {
@@ -51,6 +52,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         }
 
         _gameObjects.Remove(gameObject);
+        Debug.WriteLine($"disposed a GameObject: (Count: {_gameObjects.Count})");
     }
     #endregion //object management
 
