@@ -7,10 +7,10 @@ using SpaceShooter.Source.Core.ScriptComponent;
 namespace Source.Core.Components;
 internal class SpriteRenderer : Component, IDraw, ILoadContent {
     //TODO: add easy texture sizing which includes scaling
+    private Vector2 _origin;
     public SpriteData spriteData = new() {
         textureData = new(),
         tint = Color.White,
-        origin = Vector2.Zero,
         effects = SpriteEffects.None,
         layerDepth = 0,
     };
@@ -28,7 +28,9 @@ internal class SpriteRenderer : Component, IDraw, ILoadContent {
             null,
             spriteData.tint,
             Transform.rotation,
-            spriteData.origin,
+            Transform.origin * new Vector2(
+                spriteData.textureData.texture2D.Width,
+                spriteData.textureData.texture2D.Height),
             Transform.scale,
             spriteData.effects,
             spriteData.layerDepth

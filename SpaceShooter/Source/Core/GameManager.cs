@@ -85,7 +85,7 @@ internal class GameManager : Game {
         GameObject gameObject = new();
         gameObject.AddComponent<PlayerInput>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.spriteData.textureData.name = "transgender_flag";
+        spriteRenderer.spriteData.textureData.name = "HighPigeon";
 
 
         _initialized = true;
@@ -97,7 +97,7 @@ internal class GameManager : Game {
     //called after initialize; loads the content
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        Content.Load<Texture2D>("transgender_flag");
+        Content.Load<Texture2D>("HighPigeon");
 
         _contentLoaded = true;
         UpdateGameObjects(EventType.LOADCONENT);
