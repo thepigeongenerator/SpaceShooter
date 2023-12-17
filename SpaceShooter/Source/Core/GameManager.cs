@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Source.Core.Components;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.ScriptComponent;
+using SpaceShooter.Source.Core.Utils;
 using SpaceShooter.Source.Game;
 using System;
 using System.Collections.Generic;
@@ -67,7 +68,7 @@ internal class GameManager : Game {
         return FindObjectsOfType<T>()?.FirstOrDefault();
     }
 
-    public IEnumerable<T>? FindObjectsOfType<T>() where T : Component {
+    public IEnumerable<T> FindObjectsOfType<T>() where T : Component {
         return
             from gameObject in _gameObjects
             let components = gameObject.GetComponents<T>()
@@ -97,8 +98,16 @@ internal class GameManager : Game {
     //called after initialize; loads the content
     protected override void LoadContent() {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        Content.Load<Texture2D>("transgender");
 
+        //load all textures that will be loaded
+        {
+            string[] loadTextures = JsonUtils.DeserializeFromFile<string[]>("load_content.json");
+            foreach (string name in loadTextures) {
+                Content.Load<Texture2D>(name);
+            }
+        }
+
+        //call events
         _contentLoaded = true;
         UpdateGameObjects(EventType.LOADCONENT);
 

@@ -63,7 +63,7 @@ internal class GameObject : IDisposable {
     }
 
     #region component finding
-    public IEnumerable<T>? GetComponents<T>() where T : Component {
+    public IEnumerable<T> GetComponents<T>() where T : Component {
         return
             from component in _components
             where component is T
