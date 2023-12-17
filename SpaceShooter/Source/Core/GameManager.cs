@@ -17,17 +17,12 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     private readonly List<GameObject> _gameObjects;     //the GameObjects active in the game
     private readonly GraphicsDeviceManager _graphics;   //graphics device
     private SpriteBatch _spriteBatch;                   //used for drawing sprites to the screen
-    private bool _initialized;      //true when the initialize function has been called
-    private bool _contentLoaded;    //true when the loadcontent function was called
-    private bool _loaded;           //true when the load event was called
 
     #region initialization
     private GameManager() {
         //init fields
         _gameObjects = new List<GameObject>();
         _graphics = new GraphicsDeviceManager(this);
-        _initialized = false;
-        _contentLoaded = false;
 
         //init obj
         Content.RootDirectory = "Content";
@@ -41,10 +36,6 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         }
     }
     #endregion //initializiation
-
-    public bool Initialized => _initialized;
-    public bool ContentLoaded => _contentLoaded;
-    public bool Loaded => _loaded;
 
     #region game object management
     public void AddGameObject(GameObject gameObject) {
@@ -85,6 +76,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         //TEMPORARY: add a gameObject
         GameObject gameObject = new();
         gameObject.AddComponent<PlayerInput>();
+        gameObject.AddComponent<Shooting>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         spriteRenderer.spriteData.textureData.name = "spaceship/spaceship_0";
         Animator animator = gameObject.AddComponent<Animator>();
@@ -101,7 +93,6 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         _graphics.ApplyChanges();
 
         //call Initialize() on the GameObjects
-        _initialized = true;
         UpdateGameObjects(EventType.INITIALIZE);
 
         base.Initialize();
@@ -120,11 +111,9 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         }
 
         //call the GameObjects to run LoadContent()
-        _contentLoaded = true;
         UpdateGameObjects(EventType.LOADCONENT);
 
         //call the GameObjects to run Load()
-        _loaded = true;
         UpdateGameObjects(EventType.LOAD);
     }
 
@@ -138,6 +127,11 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         gameTime.ElapsedGameTime *= Time.timeScale; //calculate the elapsed time using the timescale
         Time.deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds; //calculate the deltaTime
 
+        //initialize components that may have been added between updates
+        UpdateGameObjects(EventType.INITIALIZE);
+        UpdateGameObjects(EventType.LOADCONENT);
+        UpdateGameObjects(EventType.LOAD);
+
         //call Update() on all GameObjects
         UpdateGameObjects(EventType.UPDATE, gameTime);
 
@@ -150,6 +144,12 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         gameTime.ElapsedGameTime *= Time.timeScale; //calculate the elapsed time using the timescale
         Time.deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds; //calculate the deltaTime
 
+        //initialize components that may have been added between updates
+        UpdateGameObjects(EventType.INITIALIZE);
+        UpdateGameObjects(EventType.LOADCONENT);
+        UpdateGameObjects(EventType.LOAD);
+
+        //clear the screen
         GraphicsDevice.Clear(new Color(0.16f, 0.150f, 0.165f));
 
         _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
@@ -158,50 +158,78 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         UpdateGameObjects(EventType.DRAW, gameTime, _spriteBatch);
 
         _spriteBatch.End();
-        
+
         base.Draw(gameTime);
     }
     #endregion //monogame events
 
     private void UpdateGameObjects(EventType eventType, params object[] args) {
-        //get the type which will be used to check which event will be implemented
-        Type checkType = eventType switch {
-            EventType.INITIALIZE => typeof(IInitialize),
-            EventType.LOADCONENT => typeof(ILoadContent),
-            EventType.LOAD => typeof(ILoad),
-            EventType.UPDATE => typeof(IUpdate),
-            EventType.DRAW => typeof(IDraw),
-            _ => throw new NotImplementedException(),
-        };
+        #region event handling
+        void TryRun(Action action) {
+            try {
+                action.Invoke();
+            }
+            catch {
+                throw;
+            }
+        }
+
+        void InitializeComponent(Component comp) {
+            if (comp.initialized == false && comp is IInitialize obj) {
+                TryRun(() => obj.Initialize());
+                comp.initialized = true;
+            }
+        }
+
+        void LoadContentComponent(Component comp) {
+            if (comp.contentLoaded == false && comp is ILoadContent obj) {
+                TryRun(() => obj.LoadContent());
+                comp.contentLoaded = true;
+            }
+        }
+
+        void LoadComponent(Component comp) {
+            if (comp.loaded == false && comp is ILoad obj) {
+                TryRun(() => obj.Load());
+                comp.loaded = true;
+            }
+        }
+
+        void UpdateComponent(Component comp, GameTime gameTime) {
+            if (comp is IUpdate obj) {
+                TryRun(() => obj.Update(gameTime));
+            }
+        }
+
+        void DrawComponent(Component comp, GameTime gameTime, SpriteBatch spriteBatch) {
+            if (comp is IDraw obj) {
+                TryRun(() => obj.Draw(gameTime, spriteBatch));
+            }
+        }
+        #endregion //event handling
 
         List<Task> callEvents = new(); //list of the tasks which is calling the methods within the gameObjects
-                                       //loop through the gameObjects within the game
-        foreach (GameObject gameObject in _gameObjects) {
-            IReadOnlyCollection<Component> components = gameObject.GetComponents(); //get the components from the gameObject
-                                                                                    //loop through the components in the gameObject
-            foreach (Component component in components) {
-                //if the component's type doesn't implement any of the scriptable types, continue to the next element
-                if (component.GetType().GetInterface(checkType.FullName) == null) {
+        //loop through the gameObjects within the game
+        for (int i = 0; i < _gameObjects.Count; i++) {
+            IReadOnlyCollection<Component> components = _gameObjects[i].GetComponents(); //get the components from the gameObject
+            //loop through the components in the gameObject
+            for (int j = 0; j < components.Count; j++) {
+
+                Component component = components.ElementAt(j); //get the element at j and store it's referencedddd
+                if (component == null) {
                     continue;
                 }
 
-                //create a task of calling the method
-                Task task = eventType switch {
-                    EventType.INITIALIZE //call the initialize method
-                        => Task.Run(() => ((IInitialize)component).Initialize()), //calling Initialize()
-                    EventType.LOADCONENT //call the load content method
-                        => Task.Run(() => ((ILoadContent)component).LoadContent()), //calling LoadContent()
-                    EventType.LOAD //call the load content method
-                        => Task.Run(() => ((ILoad)component).Load()), //calling Load()
-                    EventType.UPDATE //call the update method with the correct arguments
-                        => Task.Run(() => ((IUpdate)component).Update((GameTime)args[0])), //calling Update()
-                    EventType.DRAW //call the drawing method with the correct arguments
-                        => Task.Run(() => ((IDraw)component).Draw((GameTime)args[0], (SpriteBatch)args[1])), //calling Draw()
-                    _ => throw new NotImplementedException($"{eventType} was not implemented"),
-                };
+                Task task = Task.Run(eventType switch {
+                    EventType.INITIALIZE => () => InitializeComponent(component),
+                    EventType.LOADCONENT => () => LoadContentComponent(component),
+                    EventType.LOAD => () => LoadComponent(component),
+                    EventType.UPDATE => () => UpdateComponent(component, (GameTime)args[0]),
+                    EventType.DRAW => () => DrawComponent(component, (GameTime)args[0], (SpriteBatch)args[1]),
+                    _ => throw new NotImplementedException(),
+                });
 
-                //store the task in the list
-                callEvents.Add(task);
+                callEvents.Add(task); //store the task in the list
             }
         }
 

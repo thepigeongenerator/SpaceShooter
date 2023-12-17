@@ -27,22 +27,8 @@ internal class GameObject : IDisposable {
 
     //adds a component to the GameObject
     public T AddComponent<T>() where T : Component {
-        GameManager game = GameManager.Instance;
         T component = Activator.CreateInstance<T>();
         component.GameObject = this;
-
-        //initialization
-        if (game.Initialized && component is IInitialize initialize) {
-            initialize.Initialize();
-        }
-
-        if (game.ContentLoaded && component is ILoadContent loadContent) {
-            loadContent.LoadContent();
-        }
-
-        if (game.ContentLoaded && component is ILoad load) {
-            load.Load();
-        }
 
         //add the components to the GameObject
         _components.Add(component);

@@ -5,6 +5,10 @@ using System;
 
 namespace SpaceShooter.Source.Core;
 internal abstract class Component : IDisposable {
+    public bool initialized = false;
+    public bool contentLoaded = false;
+    public bool loaded = false;
+
     private bool _disposed = false;
     private GameObject? _gameObject;
 
@@ -42,7 +46,7 @@ internal abstract class Component : IDisposable {
     }
 
     public void Dispose() {
-        _disposed = false;
+        _disposed = true;
         GameObject.RemoveComponent(this);
     }
 }
