@@ -35,7 +35,7 @@ internal class Animator : Component, IUpdate, ILoadContent {
     //called every frame update
     public void Update(GameTime gameTime) {
         //conditions to pass to run the animator
-        if (enabled && condition.Invoke() && (gameTime.TotalGameTime * Time.timeScale) < _timedOutTill) {
+        if (enabled && condition.Invoke() && gameTime.TotalGameTime < _timedOutTill) {
             return;
         }
         
@@ -50,6 +50,6 @@ internal class Animator : Component, IUpdate, ILoadContent {
         }
 
         //reset the timeout
-        _timedOutTill = (gameTime.TotalGameTime * Time.timeScale) + TimeSpan.FromMilliseconds(delayMiliSeconds);
+        _timedOutTill = gameTime.TotalGameTime + (TimeSpan.FromMilliseconds(delayMiliSeconds) / Time.timeScale);
     }
 }

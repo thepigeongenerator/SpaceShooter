@@ -7,6 +7,6 @@ using System;
 namespace SpaceShooter.Source.Game;
 internal class Spinner : Component, IUpdate {
     public void Update(GameTime gameTime) {
-        Transform.rotation += MathF.PI / 180 * 20 * Time.GetDeltaTime(gameTime);
+        Transform.rotation += MathF.PI / 180 * 20 * Time.deltaTime;
     }
 }

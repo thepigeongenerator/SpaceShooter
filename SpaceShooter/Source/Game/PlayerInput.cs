@@ -19,7 +19,7 @@ internal class PlayerInput : Component, IUpdate, IInitialize {
 
     public void Update(GameTime gameTime) {
         //move left handling
-        float speed = SPEED * Time.GetDeltaTime(gameTime);
+        float speed = SPEED * Time.deltaTime;
 
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
             speed *= SPEEDBOOST;
