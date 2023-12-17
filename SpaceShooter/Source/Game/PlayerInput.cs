@@ -3,11 +3,12 @@ using Microsoft.Xna.Framework.Input;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
+using SpaceShooter.Source.Core.Utils;
 
 namespace SpaceShooter.Source.Game;
 internal class PlayerInput : Component, IUpdate, IInitialize {
-    private const float SPEED = 5f;
-    private const float SPEEDBOOST = 5f;
+    private const float SPEED = 500f;
+    private const float SPEEDBOOST = 3f;
 
     public void Initialize() {
         GameManager game = GameManager.Instance;
@@ -18,7 +19,7 @@ internal class PlayerInput : Component, IUpdate, IInitialize {
 
     public void Update(GameTime gameTime) {
         //move left handling
-        float speed = SPEED;
+        float speed = SPEED * Time.GetDeltaTime(gameTime);
 
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
             speed *= SPEEDBOOST;

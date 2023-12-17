@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShooter.Source.Core.Data;
 using SpaceShooter.Source.Core.ScriptComponent;
+using SpaceShooter.Source.Core.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -34,10 +35,10 @@ internal class Animator : Component, IUpdate, ILoadContent {
     //called every frame update
     public void Update(GameTime gameTime) {
         //conditions to pass to run the animator
-        if (enabled && condition.Invoke() && gameTime.TotalGameTime < _timedOutTill) {
+        if (enabled && condition.Invoke() && (gameTime.TotalGameTime * Time.timeScale) < _timedOutTill) {
             return;
         }
-
+        
         //timeout over
         _spriteRenderer.spriteData.textureData = frames[_frameIndex]; //swap out the current texture with the texture in the animator
 
@@ -49,6 +50,6 @@ internal class Animator : Component, IUpdate, ILoadContent {
         }
 
         //reset the timeout
-        _timedOutTill = gameTime.TotalGameTime + TimeSpan.FromMilliseconds(delayMiliSeconds);
+        _timedOutTill = (gameTime.TotalGameTime * Time.timeScale) + TimeSpan.FromMilliseconds(delayMiliSeconds);
     }
 }

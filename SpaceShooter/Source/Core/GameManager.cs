@@ -7,6 +7,7 @@ using SpaceShooter.Source.Core.Utils;
 using SpaceShooter.Source.Game;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -90,6 +91,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_0" });
         animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_1" });
         animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_2" });
+        animator.delayMiliSeconds = 100;
         gameObject.Transform.scale = Vector2.One * 5;
 
         //set graphics settings
@@ -148,7 +150,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         UpdateGameObjects(EventType.DRAW, gameTime, _spriteBatch);
 
         _spriteBatch.End();
-
+        
         base.Draw(gameTime);
     }
     #endregion //monogame events

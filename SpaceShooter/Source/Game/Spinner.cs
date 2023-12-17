@@ -11,6 +11,6 @@ internal class Spinner : Component, IUpdate, IInitialize {
     }
 
     public void Update(GameTime gameTime) {
-        Transform.rotation += MathF.PI / 180 * 0.1f * gameTime.GetDeltaTime();
+        Transform.rotation += MathF.PI / 180 * 0.1f * Time.GetDeltaTime(gameTime);
     }
 }
