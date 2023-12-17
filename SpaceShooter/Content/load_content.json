@@ -1,5 +1,7 @@
 [
   "spaceship/spaceship_0",
   "spaceship/spaceship_1",
-  "spaceship/spaceship_2"
+  "spaceship/spaceship_2",
+  "astroid",
+  "bullet"
 ]
