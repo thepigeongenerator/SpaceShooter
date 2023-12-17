@@ -1,10 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Source.Core.Data;
-using SpaceShooter.Source.Core;
+using SpaceShooter.Source.Core.Data;
 using SpaceShooter.Source.Core.ScriptComponent;
 
-namespace Source.Core.Components;
+namespace SpaceShooter.Source.Core.Components;
 internal class SpriteRenderer : Component, IDraw, ILoadContent {
     //TODO: add easy texture sizing which includes scaling
     private Vector2 _origin;

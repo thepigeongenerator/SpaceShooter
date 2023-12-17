@@ -1,4 +1,6 @@
-﻿using Source.Core;
+﻿using SpaceShooter.Source.Core;
+
+namespace SpaceShooter.Source;
 
 internal class Program {
     private static void Main() {

@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using Source.Core;
 using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
 using System;

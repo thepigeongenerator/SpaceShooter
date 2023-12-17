@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Source.Core;
-using Source.Core.Components;
 using SpaceShooter.Source.Core;
+using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
 
 namespace SpaceShooter.Source.Game;

@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Source.Core.Components;
-using SpaceShooter.Source.Core;
+using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
 using SpaceShooter.Source.Game;
@@ -11,8 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Source.Core;
-internal class GameManager : Game {
+namespace SpaceShooter.Source.Core;
+internal class GameManager : Microsoft.Xna.Framework.Game {
     private static GameManager _instance = null;
     private readonly List<GameObject> _gameObjects;
     private readonly GraphicsDeviceManager _graphics;
@@ -101,7 +100,7 @@ internal class GameManager : Game {
 
         //load all textures that will be loaded
         {
-            string[] loadTextures = JsonUtils.DeserializeFromFile<string[]>("load_content.json");
+            string[] loadTextures = JsonUtils.DeserializeFromFile<string[]>(@"Content\load_content.json");
             foreach (string name in loadTextures) {
                 Content.Load<Texture2D>(name);
             }

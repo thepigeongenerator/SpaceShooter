@@ -25,11 +25,6 @@
 /processorParam:TextureFormat=Color
 /build:HighPigeon.png
 
-#begin load_content.json
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:load_content.json
-
 #begin trangender.png
 /importer:TextureImporter
 /processor:TextureProcessor
