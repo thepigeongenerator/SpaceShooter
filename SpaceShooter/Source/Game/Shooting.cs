@@ -9,7 +9,7 @@ using System;
 namespace SpaceShooter.Source.Game;
 internal class Shooting : Component, ILoad, ILoadContent, IUpdate {
     private const int DELAY_MILISECONDS = 200;
-    private TimeSpan _timedOutTill = TimeSpan.Zero;
+    private TimeSpan _timedOutTill = TimeSpan.FromMilliseconds(1000); //initial delay so the player doesn't immediately start shooting
     private Vector2 _bulletPos = Vector2.Zero;
     private Texture2D _bulletTexture;
 

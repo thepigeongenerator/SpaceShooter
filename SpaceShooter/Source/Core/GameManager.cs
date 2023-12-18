@@ -84,6 +84,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         GameObject gameObject = new();
         gameObject.AddComponent<PlayerInput>();
         gameObject.AddComponent<Shooting>();
+        gameObject.AddComponent<AstroidSpawning>();
         SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         spriteRenderer.spriteData.textureData.name = "spaceship/spaceship_0";
         Animator animator = gameObject.AddComponent<Animator>();
@@ -139,7 +140,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         LoadQue();
 
         //call Update() on all GameObjects
-        UpdateGameObjects(EventType.UPDATE, _loadedGameObjects, gameTime);
+        UpdateGameObjects(EventType.UPDATE, _loadedGameObjects.ToList(), gameTime); //use a copy of the list due to it being subject to change
 
         base.Update(gameTime);
     }

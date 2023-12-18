@@ -8,7 +8,6 @@ using SpaceShooter.Source.Core.Utils;
 namespace SpaceShooter.Source.Game;
 internal class PlayerInput : Component, IUpdate, IInitialize {
     private const float SPEED = 500f;
-    private const float SPEEDBOOST = 3f;
 
     public void Initialize() {
         GameManager game = GameManager.Instance;
@@ -22,7 +21,10 @@ internal class PlayerInput : Component, IUpdate, IInitialize {
         float speed = SPEED * Time.deltaTime;
 
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
-            speed *= SPEEDBOOST;
+            Time.timeScale = 10f;
+        }
+        else {
+            Time.timeScale = 1f;
         }
 
         if (Keyboard.GetState().IsKeyDown(Keys.A) || Keyboard.GetState().IsKeyDown(Keys.Left)) {
