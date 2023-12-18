@@ -2,6 +2,7 @@
 
 using SpaceShooter.Source.Core.Components;
 using System;
+using System.Collections.Generic;
 
 namespace SpaceShooter.Source.Core;
 internal abstract class Component : IDisposable {
@@ -43,6 +44,14 @@ internal abstract class Component : IDisposable {
 
     public T? GetComponent<T>() where T : Component {
         return GameObject.GetComponent<T>();
+    }
+
+    public static T? FindObjectOfType<T>() where T : Component {
+        return GameManager.Instance.FindObjectOfType<T>();
+    }
+
+    public static IEnumerable<T>? FindObjectsOfType<T>() where T : Component {
+        return GameManager.Instance.FindObjectsOfType<T>();
     }
 
     public void Dispose() {
