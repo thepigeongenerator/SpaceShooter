@@ -86,6 +86,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         {
             GameObject gameObject = new();
             gameObject.AddComponent<PlayerInput>();
+            gameObject.AddComponent<PlayerHealth>();
             gameObject.AddComponent<Shooting>();
             gameObject.AddComponent<AstroidSpawning>();
             SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
