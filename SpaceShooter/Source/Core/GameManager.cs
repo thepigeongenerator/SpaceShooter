@@ -57,8 +57,8 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     }
 
     public void DisposeGameObject(GameObject gameObject) {
-        //if the gameObject isn't disposed
-        if (gameObject.Disposed == false) {
+        //if the gameObject isn't disposing
+        if (gameObject.Disposing == false) {
             //dispose the gameObject and exit, since the gameObject calls this itself
             gameObject.Dispose();
             return;
@@ -146,10 +146,10 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         //call Update() on all GameObjects
         UpdateGameObjects(EventType.UPDATE, _loadedGameObjects.ToList(), gameTime); //use a copy of the list due to it being subject to change
 
-        //collision update
-        foreach (Collider collider in _colliders) {
-            collider
-        }
+        ////collision update
+        //foreach (Collider collider in _colliders) {
+        //    collider.Update(gameTime);
+        //}
 
         //update ques
         LoadQue(); //load the qued gameObjects

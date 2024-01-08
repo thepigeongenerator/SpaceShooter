@@ -40,7 +40,4 @@ internal abstract class Collider : Component, IUpdate {
     /// used to check whether a position is within the collider
     /// </summary>
     public abstract bool InCollider(Vector2 position);
-
-    public override void Dispose() {
-    }
 }
