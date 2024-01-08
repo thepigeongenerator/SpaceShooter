@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.Components;
+using SpaceShooter.Source.Core.Components.Colliders;
 using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
 using System;
@@ -55,6 +56,8 @@ internal class AstroidSpawning : Component, IUpdate, ILoadContent {
         GameObject astroid = new();
         astroid.Transform.position = position;
         astroid.AddComponent<Astroid>();
+        CircleCollider collider = astroid.AddComponent<CircleCollider>();
+        collider.radius = _astroidTexture.Width / 2;
         SpriteRenderer spriteRenderer = astroid.AddComponent<SpriteRenderer>();
         spriteRenderer.spriteData.textureData.texture2D = _astroidTexture;
     }

@@ -4,7 +4,6 @@ using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
 using System;
-using System.Diagnostics;
 
 namespace SpaceShooter.Source.Game;
 internal class Astroid : Component, IUpdate, IInitialize {
@@ -20,13 +19,13 @@ internal class Astroid : Component, IUpdate, IInitialize {
 
     public void Update(GameTime gameTime) {
         //get the direction towards the player
-        Vector2 direction = Transform.position - _playerTransform.position;
+        Vector2 direction = _playerTransform.position - Transform.position;
         direction.Normalize();
 
         //update the transform of the astroid
         Transform.rotation += MathF.PI / 180 * 20 * Time.deltaTime; //rotate the astroid
         Transform.position.Y += 1 * SPEED * Time.deltaTime; //move the astroid down
-        Transform.position.X += direction.X * 0.1f * Time.deltaTime; //move the astroid slightly towards the player
+        Transform.position.X += direction.X * 1f * Time.deltaTime; //move the astroid slightly towards the player
 
         GameManager game = GameManager.Instance;
         int height = game.GraphicsDevice.Viewport.Height;

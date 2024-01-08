@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.Components;
+using SpaceShooter.Source.Core.Components.Colliders;
 using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
 using System;
@@ -32,9 +33,11 @@ internal class Shooting : Component, ILoad, ILoadContent, IUpdate {
             GameObject bullet = new();
             bullet.Transform.position = Transform.position + _bulletPos;
             bullet.Transform.scale = Vector2.One * 4;
+            bullet.AddComponent<Bullet>();
             SpriteRenderer spriteRenderer = bullet.AddComponent<SpriteRenderer>();
             spriteRenderer.spriteData.textureData.texture2D = _bulletTexture;
-            bullet.AddComponent<Bullet>();
+            RectangleCollider collider = bullet.AddComponent<RectangleCollider>();
+            collider.collisionArea = spriteRenderer.TextureSize;
         }
 
         _timedOutTill = gameTime.TotalGameTime + (TimeSpan.FromMilliseconds(DELAY_MILISECONDS) / Time.timeScale);

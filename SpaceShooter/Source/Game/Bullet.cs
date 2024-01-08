@@ -5,7 +5,7 @@ using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
 
 namespace SpaceShooter.Source.Game;
-internal class Bullet : Component, IUpdate {
+internal class Bullet : Component, IUpdate, ICollisionEnter {
     private const float SPEED = 500;
 
     public void Update(GameTime gameTime) {
@@ -15,5 +15,14 @@ internal class Bullet : Component, IUpdate {
         if (Transform.position.Y < 0) {
             GameObject.Dispose();
         }
+    }
+
+    public void CollisionEnter(Collider collider) {
+        if (collider.GetComponent<Bullet>() != null) {
+            return;
+        }
+
+        collider.Dispose();
+        GameObject.Dispose();
     }
 }
