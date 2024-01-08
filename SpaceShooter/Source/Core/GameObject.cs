@@ -8,6 +8,7 @@ namespace SpaceShooter.Source.Core;
 internal class GameObject : IDisposable {
     private readonly List<Component> _components;   //holds components of the GameObject
     private readonly Transform _transform;          //holds the GameObject's position
+    private bool _disposing = false;                //whether the GameObjects disposing process has started
     private bool _disposed = false;                 //whether the GameObject has been disposed
 
     public GameObject() {
@@ -64,12 +65,29 @@ internal class GameObject : IDisposable {
     #endregion //component finding
 
     public void Dispose() {
+        if (_disposed || _disposing) {
+            return;
+        }
+
+        _disposing = true;
+
+
+        GameManager.Instance.DisposeGameObject(this);
+    }
+
+    public void FinalizeDispose() {
+        if (_disposing == false) {
+            throw new Exception($"The GameObject's dispose finalize has been called before {nameof(Dispose)}");
+        }
+
+        if (_disposed == true) {
+            throw new Exception("The GameObject has already been disposed!");
+        }
+
         _disposed = true;
 
         while (_components.Count > 0) {
             _components[0].Dispose();
         }
-
-        GameManager.Instance.DisposeGameObject(this);
     }
 }

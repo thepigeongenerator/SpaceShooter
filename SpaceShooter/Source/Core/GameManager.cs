@@ -15,6 +15,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     private static GameManager _instance = null;            //holds this instance of the GameManager
     private readonly List<GameObject> _loadedGameObjects;   //the GameObjects active in the game
     private readonly List<GameObject> _loadGameObjectQue;   //the GameObjects that still need to be loaded
+    private readonly List<GameObject> _disposeGameObjectQue;//the GameObjects that still need to be disposed
     private readonly GraphicsDeviceManager _graphics;       //graphics device
     private SpriteBatch _spriteBatch;                       //used for drawing sprites to the screen
     private bool _initialized = false;
@@ -24,6 +25,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         //init fields
         _loadedGameObjects = new List<GameObject>();
         _loadGameObjectQue = new List<GameObject>();
+        _disposeGameObjectQue = new List<GameObject>();
         _graphics = new GraphicsDeviceManager(this);
 
         //init obj
@@ -39,10 +41,13 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     }
     #endregion //initializiation
 
+    public event Action GameObjectsChanged;
+
     #region game object management
     public void AddGameObject(GameObject gameObject) {
         if (_initialized == false) {
             _loadedGameObjects.Add(gameObject);
+            GameObjectsChanged?.Invoke();
         }
         else {
             _loadGameObjectQue.Add(gameObject);
@@ -57,7 +62,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
             return;
         }
 
-        _loadedGameObjects.Remove(gameObject);
+        _disposeGameObjectQue.Add(gameObject);
     }
     #endregion //object management
 
@@ -136,11 +141,12 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         gameTime.ElapsedGameTime *= Time.timeScale; //calculate the elapsed time using the timescale
         Time.deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds; //calculate the deltaTime
 
-        //load the qued gameObjects
-        LoadQue();
-
         //call Update() on all GameObjects
         UpdateGameObjects(EventType.UPDATE, _loadedGameObjects.ToList(), gameTime); //use a copy of the list due to it being subject to change
+
+        //update ques
+        LoadQue(); //load the qued gameObjects
+        DisposeQue(); //disposes the qued gameObjects
 
         base.Update(gameTime);
     }
@@ -150,8 +156,6 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         //calculate timings
         gameTime.ElapsedGameTime *= Time.timeScale; //calculate the elapsed time using the timescale
         Time.deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds; //calculate the deltaTime
-
-        LoadQue();
 
         //clear the screen
         GraphicsDevice.Clear(new Color(0.16f, 0.150f, 0.165f));
@@ -167,25 +171,50 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     }
     #endregion //monogame events
 
+    #region que updaters
     //loads the gameObjects which have been qued up
     private void LoadQue() {
-        //don't bother if there is nothing in the que
-        if (_loadGameObjectQue.Count == 0) {
-            return;
+        bool activated = false;
+
+        while (_loadGameObjectQue.Count > 0) {
+            activated = true;
+
+            //initialize components that may have been added between updates
+            UpdateComponents(EventType.INITIALIZE, _loadGameObjectQue[0]);
+            UpdateComponents(EventType.LOADCONENT, _loadGameObjectQue[0]);
+            UpdateComponents(EventType.LOAD, _loadGameObjectQue[0]);
+
+            _loadedGameObjects.Add(_loadGameObjectQue[0]);
+            _loadGameObjectQue.RemoveAt(0);
         }
 
-        //initialize components that may have been added between updates
-        UpdateGameObjects(EventType.INITIALIZE, _loadGameObjectQue);
-        UpdateGameObjects(EventType.LOADCONENT, _loadGameObjectQue);
-        UpdateGameObjects(EventType.LOAD, _loadGameObjectQue);
-        _loadGameObjectQue.ForEach((obj) => _loadedGameObjects.Add(obj)); //add the gameObjects to the loaded list
-        _loadGameObjectQue.Clear(); //clear the que list
+        if (activated) {
+            GameObjectsChanged?.Invoke();
+        }
     }
 
+    //disposes the gameObjects that have been qued up
+    private void DisposeQue() {
+        bool activated = false;
+
+        while (_disposeGameObjectQue.Count > 0) {
+            activated = true;
+
+            _loadedGameObjects.Remove(_disposeGameObjectQue[0]);
+            _disposeGameObjectQue[0].FinalizeDispose();
+            _disposeGameObjectQue.RemoveAt(0);
+        }
+
+        if (activated) {
+            GameObjectsChanged?.Invoke();
+        }
+    }
+    #endregion //que updaters
+
     /// <summary>
-    /// calls the <paramref name="eventType"/> on each component in <paramref name="gameObjects"/> asynchronously. Blocks thread until all Components have been Updated.
+    /// calls the <paramref name="eventType"/> on each component in <paramref name="gameObject"/>
     /// </summary>
-    private static void UpdateGameObjects(EventType eventType, IReadOnlyCollection<GameObject> gameObjects, params object[] args) {
+    private static void UpdateComponents(EventType eventType, GameObject gameObject, params object[] args) {
         #region event handling
         void InitializeComponent(Component comp) {
             if (comp.initialized == false && comp is IInitialize obj) {
@@ -221,7 +250,42 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         }
         #endregion //event handling
 
+        IReadOnlyCollection<Component> components = gameObject.GetComponents(); //get the components from the gameObject
         List<Task> callEvents = new(); //list of the tasks which is calling the methods within the gameObjects
+
+        for (int j = 0; j < components.Count; j++) {
+            Component component = components.ElementAt(j); //get the element at j and store it's referenced
+            if (component == null) {
+                continue;
+            }
+
+            Task task = Task.Run(eventType switch {
+                EventType.INITIALIZE => () => InitializeComponent(component),
+                EventType.LOADCONENT => () => LoadContentComponent(component),
+                EventType.LOAD => () => LoadComponent(component),
+                EventType.UPDATE => () => UpdateComponent(component, (GameTime)args[0]),
+                EventType.DRAW => () => DrawComponent(component, (GameTime)args[0], (SpriteBatch)args[1]),
+                _ => throw new NotImplementedException(),
+            });
+
+
+            if (eventType == EventType.LOADCONENT) {
+                callEvents.Add(task); //store the task in the list
+            }
+            else {
+                task.Wait();
+            }
+        }
+
+        //await all the tasks being done
+        Task.WhenAll(callEvents).Wait();
+    }
+
+    /// <summary>
+    /// calls the <paramref name="eventType"/> on each component in <paramref name="gameObjects"/>
+    /// </summary>
+    private static void UpdateGameObjects(EventType eventType, IReadOnlyCollection<GameObject> gameObjects, params object[] args) {
+
         //loop through the gameObjects within the game
         for (int i = 0; i < gameObjects.Count; i++) {
             GameObject gameObject = gameObjects.ElementAt(i);
@@ -230,29 +294,8 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
                 continue; //BUG: idk why this check is even nessecary, but at some point a gameObject == null
             }
 
-            IReadOnlyCollection<Component> components = gameObject.GetComponents(); //get the components from the gameObject
-            //loop through the components in the gameObject
-            for (int j = 0; j < components.Count; j++) {
-
-                Component component = components.ElementAt(j); //get the element at j and store it's referenced
-                if (component == null) {
-                    continue;
-                }
-
-                Task task = Task.Run(eventType switch {
-                    EventType.INITIALIZE => () => InitializeComponent(component),
-                    EventType.LOADCONENT => () => LoadContentComponent(component),
-                    EventType.LOAD => () => LoadComponent(component),
-                    EventType.UPDATE => () => UpdateComponent(component, (GameTime)args[0]),
-                    EventType.DRAW => () => DrawComponent(component, (GameTime)args[0], (SpriteBatch)args[1]),
-                    _ => throw new NotImplementedException(),
-                });
-
-                callEvents.Add(task); //store the task in the list
-            }
+            //update the components of the GameObject
+            UpdateComponents(eventType, gameObject, args);
         }
-
-        //await all the tasks being done
-        Task.WhenAll(callEvents).Wait();
     }
 }
