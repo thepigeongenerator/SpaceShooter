@@ -34,4 +34,23 @@ internal class Astroid : Component, IUpdate, IInitialize {
             GameObject.Dispose();
         }
     }
+
+    public bool IsWithinBounds(Vector2 point) {
+        float radius = _spriteRenderer.TextureSize.X;
+        Vector2 local = point - Transform.position; //calculate the local position
+
+        //if the local point is outside the square that the radius fits in
+        if ((MathF.Abs(local.X) <= radius &&
+            MathF.Abs(local.Y) <= radius) == false) {
+            return false;
+        }
+
+        Vector2 circlePoint = local;
+        circlePoint *= 1f / MathF.Sqrt((circlePoint.X * circlePoint.X) + (circlePoint.Y * circlePoint.Y));
+        circlePoint *= radius;
+
+        return
+            MathF.Abs(local.X) <= MathF.Abs(float.IsFinite(circlePoint.X) ? circlePoint.X : 0f) &&
+            MathF.Abs(local.Y) <= MathF.Abs(float.IsFinite(circlePoint.Y) ? circlePoint.Y : 0f);
+    }
 }

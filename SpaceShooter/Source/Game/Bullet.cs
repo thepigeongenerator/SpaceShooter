@@ -15,5 +15,12 @@ internal class Bullet : Component, IUpdate {
         if (Transform.position.Y < 0) {
             GameObject.Dispose();
         }
+
+        foreach (Astroid astroid in FindObjectsOfType<Astroid>()) {
+            if (astroid.IsWithinBounds(Transform.position)) {
+                astroid.GameObject.Dispose();
+                GameObject.Dispose();
+            }
+        }
     }
 }
