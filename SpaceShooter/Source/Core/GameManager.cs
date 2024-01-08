@@ -82,19 +82,21 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     //called after the constructor
     protected override void Initialize() {
 
-        //TEMPORARY: add a gameObject
-        GameObject gameObject = new();
-        gameObject.AddComponent<PlayerInput>();
-        gameObject.AddComponent<Shooting>();
-        gameObject.AddComponent<AstroidSpawning>();
-        SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-        spriteRenderer.spriteData.textureData.name = "spaceship/spaceship_0";
-        Animator animator = gameObject.AddComponent<Animator>();
-        animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_0" });
-        animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_1" });
-        animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_2" });
-        animator.delayMiliSeconds = 100;
-        gameObject.Transform.scale = Vector2.One * 5;
+        //TODO: make gameobjects not hardcoded
+        {
+            GameObject gameObject = new();
+            gameObject.AddComponent<PlayerInput>();
+            gameObject.AddComponent<Shooting>();
+            gameObject.AddComponent<AstroidSpawning>();
+            SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+            spriteRenderer.spriteData.textureData.name = "spaceship/spaceship_0";
+            Animator animator = gameObject.AddComponent<Animator>();
+            animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_0" });
+            animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_1" });
+            animator.frames.Add(new Data.TextureData() { name = "spaceship/spaceship_2" });
+            animator.delayMiliSeconds = 100;
+            gameObject.Transform.scale = Vector2.One * 5;
+        }
 
         //set graphics settings
         _graphics.IsFullScreen = false;

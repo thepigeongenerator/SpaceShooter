@@ -45,7 +45,7 @@ internal abstract class Component : IDisposable {
     public T? GetComponent<T>() where T : Component {
         return GameObject.GetComponent<T>();
     }
-    
+
     public IEnumerable<T>? GetComponents<T>() where T : Component {
         return GameObject.GetComponents<T>();
     }

@@ -4,7 +4,6 @@ using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
 using System;
-using System.Diagnostics;
 
 namespace SpaceShooter.Source.Game;
 internal class Astroid : Component, IUpdate, IInitialize {
