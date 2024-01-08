@@ -41,13 +41,10 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     }
     #endregion //initializiation
 
-    public event Action GameObjectsChanged;
-
     #region game object management
     public void AddGameObject(GameObject gameObject) {
         if (_initialized == false) {
             _loadedGameObjects.Add(gameObject);
-            GameObjectsChanged?.Invoke();
         }
         else {
             _loadGameObjectQue.Add(gameObject);
@@ -55,8 +52,8 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     }
 
     public void DisposeGameObject(GameObject gameObject) {
-        //if the gameObject isn't disposed
-        if (gameObject.Disposed == false) {
+        //if the gameObject isn't disposing
+        if (gameObject.Disposing == false) {
             //dispose the gameObject and exit, since the gameObject calls this itself
             gameObject.Dispose();
             return;
@@ -174,11 +171,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
     #region que updaters
     //loads the gameObjects which have been qued up
     private void LoadQue() {
-        bool activated = false;
-
         while (_loadGameObjectQue.Count > 0) {
-            activated = true;
-
             //initialize components that may have been added between updates
             UpdateComponents(EventType.INITIALIZE, _loadGameObjectQue[0]);
             UpdateComponents(EventType.LOADCONENT, _loadGameObjectQue[0]);
@@ -187,26 +180,14 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
             _loadedGameObjects.Add(_loadGameObjectQue[0]);
             _loadGameObjectQue.RemoveAt(0);
         }
-
-        if (activated) {
-            GameObjectsChanged?.Invoke();
-        }
     }
 
     //disposes the gameObjects that have been qued up
     private void DisposeQue() {
-        bool activated = false;
-
         while (_disposeGameObjectQue.Count > 0) {
-            activated = true;
-
             _loadedGameObjects.Remove(_disposeGameObjectQue[0]);
             _disposeGameObjectQue[0].FinalizeDispose();
             _disposeGameObjectQue.RemoveAt(0);
-        }
-
-        if (activated) {
-            GameObjectsChanged?.Invoke();
         }
     }
     #endregion //que updaters

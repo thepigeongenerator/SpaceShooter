@@ -17,6 +17,10 @@ internal class GameObject : IDisposable {
         GameManager.Instance.AddGameObject(this);
     }
 
+    public bool Disposing {
+        get => _disposing;
+    }
+
     public bool Disposed {
         get => _disposed;
     }
