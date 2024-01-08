@@ -25,12 +25,12 @@ internal class Astroid : Component, IUpdate, IInitialize {
 
         //update the transform of the astroid
         Transform.rotation += MathF.PI / 180 * 20 * Time.deltaTime; //rotate the astroid
-        Transform.position.Y += 1 * SPEED * Time.deltaTime; //move the astroid down
+        Transform.position.Y += SPEED * Time.deltaTime; //move the astroid down
         Transform.position.X += direction.X * 0.1f * Time.deltaTime; //move the astroid slightly towards the player
 
         GameManager game = GameManager.Instance;
         int height = game.GraphicsDevice.Viewport.Height;
-        if ((_spriteRenderer.TextureSize.Y / 2) - Transform.position.Y > height) {
+        if (Transform.position.Y - (_spriteRenderer.TextureSize.Y / 2) > height) {
             GameObject.Dispose();
         }
     }
