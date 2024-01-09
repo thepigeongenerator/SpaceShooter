@@ -10,16 +10,9 @@ using System.Diagnostics;
 namespace SpaceShooter.Source.Game;
 internal class AstroidSpawning : Component, IUpdate, ILoadContent {
     private const int MAX_SPAWNDELAY = 100;
-    private readonly Random _rand;
     private int _spawnDelay = 1000; //spawn delay in miliseconds
     private TimeSpan _timedOutTill = TimeSpan.FromMilliseconds(1000); //set initial delay; so the player isn't bombarded from the start
     private Texture2D _astroidTexture;
-
-    public AstroidSpawning() {
-        int seed = Guid.NewGuid().GetHashCode();
-        _rand = new Random(seed);
-        Debug.WriteLine($"selected seed: '{seed}'");
-    }
 
     public void LoadContent() {
         GameManager game = GameManager.Instance;
@@ -38,7 +31,7 @@ internal class AstroidSpawning : Component, IUpdate, ILoadContent {
             Vector2 position = Vector2.Zero;
 
             //get position
-            position.X = _rand.Next(0, maxX + 1);
+            position.X = Randomizer.Next(0, maxX + 1);
 
             SpawnAstroid(position);
         }

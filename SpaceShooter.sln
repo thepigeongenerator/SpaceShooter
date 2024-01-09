@@ -7,10 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceShooter", "SpaceShoote
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug, set seed|Any CPU = Debug, set seed|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8417CEE1-4EBD-4FFA-BF1F-07AF775719CF}.Debug, set seed|Any CPU.ActiveCfg = Debug, set seed|Any CPU
+		{8417CEE1-4EBD-4FFA-BF1F-07AF775719CF}.Debug, set seed|Any CPU.Build.0 = Debug, set seed|Any CPU
 		{8417CEE1-4EBD-4FFA-BF1F-07AF775719CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8417CEE1-4EBD-4FFA-BF1F-07AF775719CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8417CEE1-4EBD-4FFA-BF1F-07AF775719CF}.Release|Any CPU.ActiveCfg = Release|Any CPU

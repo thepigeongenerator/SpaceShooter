@@ -5,10 +5,14 @@
     <RollForward>Major</RollForward>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
+    <Configurations>Debug;Release;Debug, set seed</Configurations>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug, set seed|AnyCPU'">
+    <DefineConstants>$(DefineConstants);SET_SEED</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Icon.ico" />

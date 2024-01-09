@@ -7,6 +7,7 @@ using SpaceShooter.Source.Core.Utils;
 using SpaceShooter.Source.Game;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,6 +29,17 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
         _disposeGameObjectQue = new List<GameObject>();
         _graphics = new GraphicsDeviceManager(this);
 
+        //init randomizer
+        {
+#if SET_SEED && DEBUG
+            int seed = 0;
+#else
+            int seed = Guid.NewGuid().GetHashCode();
+#endif
+            Debug.WriteLine("seed: {0}", seed);
+            Randomizer.CreateNew(seed); //create a randomizer with a random seed
+        }
+
         //init obj
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
@@ -39,7 +51,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
             return _instance;
         }
     }
-    #endregion //initializiation
+#endregion //initializiation
 
     #region game object management
     public void AddGameObject(GameObject gameObject) {

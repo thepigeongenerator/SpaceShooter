@@ -7,6 +7,7 @@ using System;
 
 namespace SpaceShooter.Source.Game;
 internal class Astroid : Component, IUpdate, IInitialize {
+    private const float MAX_SIZE = 3f;
     private const float SPEED = 10f;
     private PlayerHealth _playerHealth;
     private Transform _playerTransform;
@@ -16,6 +17,8 @@ internal class Astroid : Component, IUpdate, IInitialize {
         _playerHealth = FindObjectOfType<PlayerHealth>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _playerTransform = _playerHealth.Transform;
+
+        Transform.scale = Vector2.One * Randomizer.NextFloat(1f, MAX_SIZE);
     }
 
     public void Update(GameTime gameTime) {
