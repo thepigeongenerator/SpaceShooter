@@ -40,9 +40,15 @@ internal class Astroid : Component, IUpdate, IInitialize {
         }
 
         //check whether the player is within the bounds of the astroid
-        if (IsWithinBounds(_playerTransform.position)) {
-            _playerHealth.Damage(1f); //remove 1 health from the player
-            GameObject.Dispose(); //dispose of ourselves
+        {
+            Vector2 position = _playerTransform.position;
+            float xPos = _playerTransform.position.X;
+            float xScale = _playerTransform.scale.X;
+            position.X = Math.Clamp(Transform.position.X, xPos - xScale, xPos + xScale); //BUG: texture size not calculated
+            if (IsWithinBounds(_playerTransform.position)) {
+                _playerHealth.Damage(1f); //remove 1 health from the player
+                GameObject.Dispose(); //dispose of ourselves
+            }
         }
 
         //dispose if the astroid exits the screen
