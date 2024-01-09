@@ -7,8 +7,9 @@ using System;
 
 namespace SpaceShooter.Source.Game;
 internal class Astroid : Component, IUpdate, IInitialize {
-    private const float MAX_SIZE = 3f;
-    private const float SPEED = 10f;
+    public const float MAX_SIZE = 3f;
+    private const float DEFAULT_SPEED = 10f;
+    private float _speed;
     private PlayerHealth _playerHealth;
     private Transform _playerTransform;
     private SpriteRenderer _spriteRenderer;
@@ -18,7 +19,12 @@ internal class Astroid : Component, IUpdate, IInitialize {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _playerTransform = _playerHealth.Transform;
 
-        Transform.scale = Vector2.One * Randomizer.NextFloat(1f, MAX_SIZE);
+        //set a random rotation
+        Transform.rotation = Randomizer.NextFloat(0f, MathF.PI * 2);
+
+        float scale = Randomizer.NextFloat(1f, MAX_SIZE);
+        Transform.scale = Vector2.One * scale;
+        _speed = DEFAULT_SPEED * (MAX_SIZE - scale + 1f); //calculate speed depending on the scale (higher size = lower speed)
     }
 
     public void Update(GameTime gameTime) {
@@ -29,7 +35,7 @@ internal class Astroid : Component, IUpdate, IInitialize {
 
             //update the transform of the astroid so it moves down and slightly towards the player
             Transform.rotation += MathF.PI / 180 * 20 * Time.deltaTime; //rotate the astroid
-            Transform.position.Y += SPEED * Time.deltaTime; //move the astroid down
+            Transform.position.Y += _speed * Time.deltaTime; //move the astroid down
             Transform.position.X += direction.X * 0.1f * Time.deltaTime; //move the astroid slightly towards the player
         }
 

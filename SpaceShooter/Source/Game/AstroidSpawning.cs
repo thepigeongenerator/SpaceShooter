@@ -11,7 +11,7 @@ namespace SpaceShooter.Source.Game;
 internal class AstroidSpawning : Component, IUpdate, ILoadContent {
     private const int MAX_SPAWNDELAY = 100;
     private int _spawnDelay = 1000; //spawn delay in miliseconds
-    private TimeSpan _timedOutTill = TimeSpan.FromMilliseconds(1000); //set initial delay; so the player isn't bombarded from the start
+    private TimeSpan _timedOutTill = TimeSpan.FromMilliseconds(0); //set initial delay; so the player isn't bombarded from the start
     private Texture2D _astroidTexture;
 
     public void LoadContent() {
@@ -28,7 +28,7 @@ internal class AstroidSpawning : Component, IUpdate, ILoadContent {
         {
             GameManager game = GameManager.Instance;
             int maxX = game.GraphicsDevice.Viewport.Width;
-            Vector2 position = Vector2.Zero;
+            Vector2 position = new(0, -1 * (_astroidTexture.Height * Astroid.MAX_SIZE));
 
             //get position
             position.X = Randomizer.Next(0, maxX + 1);
