@@ -10,9 +10,14 @@ internal class Astroid : Component, IUpdate, IInitialize {
     public const float MAX_SIZE = 3f;
     private const float DEFAULT_SPEED = 10f;
     private float _speed;
+    private bool _indestructible;
     private PlayerHealth _playerHealth;
     private Transform _playerTransform;
     private SpriteRenderer _spriteRenderer;
+
+    public bool Indestructible {
+        get => _indestructible;
+    }
 
     public void Initialize() {
         _playerHealth = FindObjectOfType<PlayerHealth>();
@@ -21,8 +26,19 @@ internal class Astroid : Component, IUpdate, IInitialize {
 
         //set a random rotation
         Transform.rotation = Randomizer.NextFloat(0f, MathF.PI * 2);
+        float scale;
 
-        float scale = Randomizer.NextFloat(1f, MAX_SIZE);
+        if (Randomizer.NextSingle() < 0.1f) { //1% chance
+            _indestructible = true;
+            scale = MAX_SIZE;
+            Transform.position.X += (_playerTransform.position.X - Transform.position.X) / 1.5f;
+            _spriteRenderer.spriteData.tint = new Color(0xFF888888);
+        }
+        else {
+            _indestructible = false;
+            scale = Randomizer.NextFloat(1f, MAX_SIZE);
+        }
+
         Transform.scale = Vector2.One * scale;
         _speed = DEFAULT_SPEED * (MAX_SIZE - scale + 1f); //calculate speed depending on the scale (higher size = lower speed)
     }

@@ -18,7 +18,10 @@ internal class Bullet : Component, IUpdate {
 
         foreach (Astroid astroid in FindObjectsOfType<Astroid>()) {
             if (astroid.IsWithinBounds(Transform.position)) {
-                astroid.GameObject.Dispose();
+                if (astroid.Indestructible == false) {
+                    astroid.GameObject.Dispose();
+                }
+
                 GameObject.Dispose();
             }
         }
