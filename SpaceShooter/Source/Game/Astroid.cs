@@ -1,18 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
 using System;
-using System.Collections.Generic;
 
 namespace SpaceShooter.Source.Game;
-internal class Astroid : Component, IUpdate, IInitialize
-#if DEBUG
-    , IDraw
-#endif
-    {
+internal class Astroid : Component, IUpdate, IInitialize {
     public const float MAX_SIZE = 3f;
     private const float DEFAULT_SPEED = 10f;
     private float _speed;
@@ -99,33 +93,5 @@ internal class Astroid : Component, IUpdate, IInitialize
         return
             MathF.Abs(local.X) <= MathF.Abs(float.IsFinite(circlePoint.X) ? circlePoint.X : 0f) &&
             MathF.Abs(local.Y) <= MathF.Abs(float.IsFinite(circlePoint.Y) ? circlePoint.Y : 0f);
-    }
-
-#if DEBUG
-    public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
-        float radius = (_spriteRenderer.UnscaledTextureSize.X - 10) * Transform.scale.X;
-        int iRadius = (int)MathF.Round(radius);
-        Texture2D texture;
-        if (textures.TryGetValue(iRadius, out texture) == false) {
-            texture = GetTexture(iRadius);
-            textures.Add(iRadius, texture);
-        }
-
-        spriteBatch.Draw(texture, Transform.position, null, new(0xFFFFFFFF), 0f, Transform.origin * _spriteRenderer.UnscaledTextureSize, 1f, SpriteEffects.None, -1f);
-    }
-
-    static Dictionary<int, Texture2D> textures = new();
-    static Texture2D GetTexture(int radius) {
-        Color[,] colorData = new Color[radius, radius];
-        Texture2D textureOut = new(GameManager.Instance.GraphicsDevice, radius * 2, radius);
-
-        for (int x = 0; x < radius; x++) {
-            for (int y = 0; y < radius; y++) {
-                if ()
-            }
-        }
-
-        textureOut.SetData(colorData);
-        return textureOut;
     }
 }
