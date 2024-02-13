@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ShapeDrawer;
 using SpaceShooter.Source.Core.Data;
 using SpaceShooter.Source.Core.ScriptComponent;
 
@@ -47,5 +48,10 @@ internal class SpriteRenderer : Component, IDraw, ILoadContent {
             spriteData.effects,
             spriteData.layerDepth
             );
+
+#if DEBUG
+        DrawShape.Point(spriteBatch, Transform.position, new Color(0xFF0000FF), 1F);
+        DrawShape.Box(spriteBatch, Transform.position - (Transform.origin * TextureSize), Transform.position + (Transform.origin * TextureSize), new Color(0xFF333333));
+#endif
     }
 }

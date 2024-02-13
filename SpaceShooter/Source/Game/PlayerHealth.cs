@@ -2,7 +2,6 @@
 using SpaceShooter.Source.Core;
 using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
-using SpaceShooter.Source.Core.Utils;
 
 namespace SpaceShooter.Source.Game;
 internal class PlayerHealth : Component, IInitialize, IUpdate {

@@ -28,6 +28,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="ShapeDrawer">
+      <HintPath>..\Dependencies\ShapeDrawer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Content\load_content.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

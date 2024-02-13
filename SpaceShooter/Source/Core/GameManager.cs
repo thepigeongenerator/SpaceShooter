@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ShapeDrawer;
 using SpaceShooter.Source.Core.Components;
 using SpaceShooter.Source.Core.ScriptComponent;
 using SpaceShooter.Source.Core.Utils;
@@ -251,7 +252,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
                 continue;
             }
 
-            Task task = Task.Run(eventType switch {
+            Action action = (eventType switch {
                 EventType.INITIALIZE => () => InitializeComponent(component),
                 EventType.LOADCONENT => () => LoadContentComponent(component),
                 EventType.LOAD => () => LoadComponent(component),
@@ -261,16 +262,8 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
             });
 
 
-            if (eventType == EventType.LOADCONENT) {
-                callEvents.Add(task); //store the task in the list
-            }
-            else {
-                task.Wait();
-            }
+            action.Invoke();
         }
-
-        //await all the tasks being done
-        Task.WhenAll(callEvents).Wait();
     }
 
     /// <summary>

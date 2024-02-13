@@ -20,12 +20,14 @@ internal class PlayerInput : Component, IUpdate, IInitialize {
         //move left handling
         float speed = SPEED * Time.deltaTime;
 
+#if DEBUG
         if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
             Time.timeScale = 10f;
         }
         else {
             Time.timeScale = 1f;
         }
+#endif
 
         if (Keyboard.GetState().IsKeyDown(Keys.A) || Keyboard.GetState().IsKeyDown(Keys.Left)) {
             Transform.position.X -= 1 * speed;

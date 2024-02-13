@@ -47,7 +47,7 @@ internal class AstroidSpawning : Component, IUpdate, ILoadContent {
     public void SpawnAstroid(Vector2 position) {
         GameObject astroid = new();
         astroid.Transform.position = position;
-        astroid.AddComponent<Astroid>();
+        _ = astroid.AddComponent<Astroid>();
         SpriteRenderer spriteRenderer = astroid.AddComponent<SpriteRenderer>();
         spriteRenderer.spriteData.textureData.texture2D = _astroidTexture;
     }
