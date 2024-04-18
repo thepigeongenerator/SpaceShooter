@@ -131,7 +131,7 @@ internal class GameManager : Microsoft.Xna.Framework.Game {
 
         //load all textures that will be loaded
         {
-            string[] loadTextures = JsonUtils.DeserializeFromFile<string[]>(@"Content\load_content.json");
+            string[] loadTextures = JsonUtils.DeserializeFromFile<string[]>("Content/load_content.json");
             foreach (string name in loadTextures) {
                 Content.Load<Texture2D>(name);
             }
