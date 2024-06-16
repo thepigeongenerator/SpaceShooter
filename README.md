@@ -3,3 +3,4 @@ In this School project I was creating a space shooter uning the [MonoGame](https
 
 ## abandoned
 I have abandoned this project due to me being unsatisfied with how I went about it. Firstly, I focuessed more on writing a "game engine" than actually coding, causing the project to be bloated. I didn't know what was going on anymore and the project ran dry.
+[I restarted from scratch](https://github.com/thepigeongenerator/SpaceShooter2), focussing more on a more functional/procedural programming pattern.
